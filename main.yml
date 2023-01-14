@@ -1,0 +1,54 @@
+---
+  - name: install nfs service
+    hosts: webservers
+    become: yes 
+    become_user: root 
+    tasks:
+      - name: ensure nfs is downloaded 
+        yum:
+          name: nfs-utils
+          state: latest
+      - name: ensure nfs is running
+        service:
+          name: nfs
+          state: started
+      - name: ensure nfs is boot persistent
+        service:
+          name: nfs
+          enabled: yes
+
+  - name: copy files to destination
+    hosts: dbservers
+    tasks:
+      - name: copy src.txt as dest.txt in the same dir
+        copy:
+          src: files/src.txt
+          dest: /root/dest.txt
+        tags:
+          - simple_copy 
+  
+      - name: Add the user 'johnd'
+        ansible.builtin.user:
+          name: alih
+          comment: Ali Haider
+
+  - name: patch a server 
+    hosts: testservers
+    tasks:
+      - name: update yum repository
+        yum:
+          name: '*' 
+          state: latest
+    tasks:
+      - name: download httpd package
+        yum:
+          name: httpd
+          state: latest
+      - name: edit a line in httpd conf file
+        lineinfile:
+          dest: /etc/httpd/conf/httpd.conf
+          line: '# \1'
+          regexp: '(^# This is the main Apache HTTP .*)'
+          backrefs: yes
+          state: present
+          backup: yes

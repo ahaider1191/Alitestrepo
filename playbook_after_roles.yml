@@ -1,0 +1,22 @@
+---
+  - name: install nfs service
+    hosts: webservers
+    become: yes 
+    become_user: root 
+    roles:
+      - nfs_roles
+
+
+  - name: copy files to destination
+    hosts: dbservers
+    roles:
+      - copy_roles
+      - adduser_roles   
+
+  - name: patch a server 
+    hosts: testservers
+    roles: 
+      - patch_roles
+      - httpd_roles
+      - cron_roles
+
