@@ -44,6 +44,16 @@
         yum:
           name: httpd
           state: latest
+      - name: cron schedule
+        cron:
+          name: this cron job is scheduled by ansible
+          minute: "0"
+          hour: "5"
+          day: "*"
+          month: "*"
+          weekday: "7"
+          user: root
+          job: "/root/cron_test/update.sh"
       - name: edit a line in httpd conf file
         lineinfile:
           dest: /etc/httpd/conf/httpd.conf
